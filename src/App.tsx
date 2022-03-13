@@ -1,10 +1,11 @@
+import SignIn from "./components/signIn";
 import UserPermissionWatcher from "./containers/userPermissionsWatcher";
 
 function App() {
   return (
     <div className="App">
       <UserPermissionWatcher>
-        <h1>BRUH</h1>
+        <SignIn />
       </UserPermissionWatcher>
     </div>
   );
