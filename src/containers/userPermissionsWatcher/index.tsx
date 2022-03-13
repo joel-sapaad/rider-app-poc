@@ -25,7 +25,7 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
     }
   }, [notificationSupport]);
 
-  return notificationStatus !== "granted" && !notificationSupport ? (
+  return notificationStatus === "granted" && notificationSupport ? (
     <>{props.children}</>
   ) : (
     <div className="user-permission-container">
