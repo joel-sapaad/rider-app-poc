@@ -6,62 +6,92 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
   const [notificationSupport, setNotificationSupport] = useState(false);
   const [notificationStatus, setNotificationStatus] = useState("default");
   const [notificationLoading, setNotificationLoading] = useState(false);
+
   const [locationSupport, setLocationSupport] = useState(false);
   const [locationStatus, setLocationStatus] = useState("default");
   const [locationLoading, setLocationLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState({ lat: 0, lon: 0 });
 
+  const [serviceWorkerSupport, setServiceWorkerSupport] = useState(false);
+  const [pushApiSupport, setPushApiSupport] = useState(false);
+
   useEffect(() => {
-    setNotificationSupport("Notification" in window);
-    setLocationSupport(
-      "geolocation" in navigator && "permissions" in navigator
-    );
+    setNotificationSupport(() => {
+      const isNotificationSupported = "Notification" in window;
+      if (isNotificationSupported) {
+        requestNotificationPermission();
+      }
+      return isNotificationSupported;
+    });
+
+    setLocationSupport(() => {
+      const isGeolocationSupported = "geolocation" in navigator;
+      if (isGeolocationSupported) {
+        requestLocationPermission();
+      }
+      return isGeolocationSupported;
+    });
+
+    setServiceWorkerSupport("serviceWorker" in navigator);
+    setPushApiSupport("PushManager" in window);
   }, []);
 
-  useEffect(() => {
-    if (locationSupport) {
-      setLocationLoading(true);
-      navigator.permissions
-        .query({ name: "geolocation" })
-        .then(function (result) {
-          if (result.state === "granted") {
-            console.log(result.state);
-            setLocationStatus(result.state);
-            setLocationLoading(false);
-            //If granted then you can directly call your function here
-          } else if (result.state === "prompt") {
-            setLocationLoading(true);
-            navigator.permissions;
-            navigator.geolocation.getCurrentPosition((location) => {
-              setLocationLoading(false);
-            });
-          } else if (result.state === "denied") {
-            setLocationLoading(false);
-            //If denied then you have to show instructions to enable location
-          }
-          result.onchange = function () {
-            setLocationLoading(false);
-            setLocationStatus(result.state);
-          };
-        });
-    }
-  }, [locationSupport]);
-
-  useEffect(() => {
-    if (notificationSupport) {
-      requestNotificationPermission();
-    }
-  }, [notificationSupport]);
-
   const requestLocation = () => {
-    navigator.permissions;
     navigator.geolocation.getCurrentPosition((location) => {
       const { latitude, longitude } = location.coords;
       setCurrentLocation({ lat: latitude, lon: longitude });
     });
   };
 
+  const requestLocationPermission = async () => {
+    setLocationLoading(true);
+    if ("permissions" in navigator) {
+      // Using Permission API
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        setLocationLoading(false);
+        setLocationStatus(result.state);
+        if (result.state === "prompt") {
+          setLocationLoading(true);
+          navigator.geolocation.getCurrentPosition(updateCurrentLocation);
+        }
+        result.onchange = () => {
+          setLocationStatus(result.state);
+        };
+      });
+    } else {
+      // Using Geolocation API (fallback)
+      navigator.geolocation.getCurrentPosition(updateCurrentLocation);
+    }
+  };
+
+  const updateCurrentLocation = (location: any) => {
+    const { latitude, longitude } = location.coords;
+    setLocationStatus("granted");
+    setCurrentLocation({ lat: latitude, lon: longitude });
+    setLocationLoading(false);
+  };
+
   const requestNotificationPermission = async () => {
+    if ("permissions" in navigator) {
+      // Using Permission API
+      setNotificationLoading(true);
+      navigator.permissions.query({ name: "notifications" }).then((result) => {
+        setNotificationLoading(false);
+        setNotificationStatus(result.state);
+        if (result.state === "prompt") {
+          requestNotifyPermission();
+        }
+        result.onchange = () => {
+          setNotificationStatus(result.state);
+        };
+      });
+    } else {
+      // Using Notification API
+      requestNotifyPermission();
+    }
+  };
+
+  const requestNotifyPermission = async () => {
     setNotificationLoading(true);
     await Notification.requestPermission()
       .then((value) => {
@@ -101,7 +131,21 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
               ? "Notifications are enabled."
               : notificationStatus === "denied"
               ? "Notification permission is blocked by user. Please enable them from browser settings"
-              : "Waiting for user confirmation. If skipped, check site settings in browser settings"}
+              : "Waiting for user confirmation. If skipped, check site permissions in browser preferences"}
+            <p>
+              {pushApiSupport
+                ? `✅ Can subscribe to push notifications${
+                    notificationStatus !== "granted" ? " if enabled." : "."
+                  }`
+                : "❌ Cannot receive notifications. Browser not supported"}
+            </p>
+            <p>
+              {serviceWorkerSupport && pushApiSupport
+                ? `✅ Can receive push notifications in background${
+                    notificationStatus !== "granted" ? " if enabled." : "."
+                  }`
+                : "❌ Cannot receive notifications in background"}
+            </p>
           </Message.Content>
         </Message>
         <Message
@@ -122,7 +166,7 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
               ? "Location permission has been allowed by user"
               : locationStatus === "granted"
               ? "Location permission denied by user"
-              : "Waiting for user confirmation. If skipped/denied, check site settings in browser settings"}
+              : "Waiting for user confirmation. If skipped/denied, check site permissions in browser preferences"}
             <br />
             {locationStatus === "granted" && (
               <>
