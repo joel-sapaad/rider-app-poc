@@ -29,6 +29,9 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
           } else if (result.state === "denied") {
             //If denied then you have to show instructions to enable location
           }
+          if (notificationSupport) {
+            requestNotificationPermission();
+          }
           result.onchange = function () {
             setLocationStatus(result.state);
           };
@@ -36,20 +39,23 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
     }
   }, [locationSupport]);
 
-  useEffect(() => {
-    if (notificationSupport) {
-      setNotificationLoading(true);
-      Notification.requestPermission()
-        .then((value) => {
-          console.log(value);
-          setNotificationLoading(false);
-          setNotificationStatus(value);
-        })
-        .catch((error) => {
-          setNotificationLoading(false);
-        });
-    }
-  }, [notificationSupport]);
+  const requestLocation = () => {
+    navigator.permissions;
+    navigator.geolocation.getCurrentPosition((location) => {});
+  };
+
+  const requestNotificationPermission = () => {
+    setNotificationLoading(true);
+    Notification.requestPermission()
+      .then((value) => {
+        console.log(value);
+        setNotificationLoading(false);
+        setNotificationStatus(value);
+      })
+      .catch((error) => {
+        setNotificationLoading(false);
+      });
+  };
 
   return notificationSupport &&
     notificationStatus === "granted" &&
@@ -88,6 +94,7 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
           header="Location"
           content="Location disabled by user"
         />
+        <button onClick={requestLocation}>Request Location</button>
       </div>
     </div>
   );
