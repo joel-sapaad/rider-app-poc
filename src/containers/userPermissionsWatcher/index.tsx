@@ -13,7 +13,9 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
 
   useEffect(() => {
     setNotificationSupport("Notification" in window);
-    setLocationSupport("geolocation" in navigator);
+    setLocationSupport(
+      "geolocation" in navigator && "permissions" in navigator
+    );
   }, []);
 
   useEffect(() => {
@@ -37,9 +39,6 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
             setLocationLoading(false);
             //If denied then you have to show instructions to enable location
           }
-          if (notificationSupport) {
-            requestNotificationPermission();
-          }
           result.onchange = function () {
             setLocationLoading(false);
             setLocationStatus(result.state);
@@ -47,6 +46,12 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
         });
     }
   }, [locationSupport]);
+
+  useEffect(() => {
+    if (notificationSupport) {
+      requestNotificationPermission();
+    }
+  }, [notificationSupport]);
 
   const requestLocation = () => {
     navigator.permissions;
@@ -56,9 +61,9 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
     });
   };
 
-  const requestNotificationPermission = () => {
+  const requestNotificationPermission = async () => {
     setNotificationLoading(true);
-    Notification.requestPermission()
+    await Notification.requestPermission()
       .then((value) => {
         console.log(value);
         setNotificationLoading(false);
