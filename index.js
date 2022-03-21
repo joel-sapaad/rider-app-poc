@@ -9,6 +9,7 @@ fs.copyFile(`${__dirname}/sw.js`, `${__dirname}/dist/sw.js`, (err) => {
 });
 // Imports
 const express = require("express");
+const webPush = require("web-push");
 const morgan = require("morgan");
 const path = require("path");
 const { createServer } = require("http");
@@ -21,6 +22,15 @@ const io = new Server(httpServer);
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(morgan("tiny"));
 app.use(express.json());
+
+const publicVapidKey = process.env.PUBLIC_VAPID_KEY;
+const privateVapidKey = process.env.PRIVATE_VAPID_KEY;
+
+webPush.setVapidDetails(
+  "mailto:test@example.com",
+  publicVapidKey,
+  privateVapidKey
+);
 
 // Watch for active websocket clients
 io.on("connection", (socket) => {
