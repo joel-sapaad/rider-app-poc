@@ -9,7 +9,6 @@ fs.copyFile(`${__dirname}/sw.js`, `${__dirname}/dist/sw.js`,(err)=>{
 });
 // Imports
 const express = require("express");
-var cors = require("cors");
 const morgan = require("morgan");
 const path = require("path");
 const { createServer } = require("http");
@@ -17,14 +16,8 @@ const { Server } = require("socket.io");
 // Initialise app
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "https://sleepy-woodland-90579.herokuapp.com/",
-    allowedHeaders: ["my-custom-header"],
-  },
-});
+const io = new Server(httpServer);
 // Middlewares
-app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "dist")));
