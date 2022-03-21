@@ -1,8 +1,8 @@
 require("dotenv").config({ path: ".env" });
 const fs = require("fs");
-fs.copyFile(`${__dirname}/sw.js`, `${__dirname}/dist/sw.js`,(err)=>{
-  if(err){
-    console.log("error copying file")
+fs.copyFile(`${__dirname}/sw.js`, `${__dirname}/dist/sw.js`, (err) => {
+  if (err) {
+    console.log("error copying file");
   } else {
     console.log("copy file success");
   }
@@ -59,8 +59,12 @@ app.post("/send_push", (req, res) => {
     .catch((error) => console.error(error));
 });
 
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "dist", "index.html"));
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist/index.html"), function (err) {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
 });
 
 const server = httpServer.listen(process.env.PORT, () => {
