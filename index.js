@@ -20,7 +20,6 @@ const io = new Server(httpServer);
 // Middlewares
 app.use(morgan("tiny"));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "dist")));
 
 // Watch for active websocket clients
 io.on("connection", (socket) => {
@@ -58,6 +57,10 @@ app.post("/send_push", (req, res) => {
   webPush
     .sendNotification(data.subscription, payload)
     .catch((error) => console.error(error));
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "dist", "index.html"));
 });
 
 const server = httpServer.listen(process.env.PORT, () => {
