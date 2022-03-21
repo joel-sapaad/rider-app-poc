@@ -21,7 +21,6 @@ const io = new Server(httpServer, {
   cors: {
     origin: "https://sleepy-woodland-90579.herokuapp.com/",
     allowedHeaders: ["my-custom-header"],
-    credentials: true,
   },
 });
 // Middlewares
