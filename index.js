@@ -17,7 +17,13 @@ const { Server } = require("socket.io");
 // Initialise app
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "https://sleepy-woodland-90579.herokuapp.com/",
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
 // Middlewares
 app.use(cors());
 app.use(morgan("tiny"));
