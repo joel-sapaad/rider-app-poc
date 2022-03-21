@@ -10,19 +10,17 @@ const LiveTracking = () => {
   let webSocket: any;
   useEffect(() => {
     const socket = io("/");
-    let watchPos: any
-    socket.on("connection",()=>{
-      watchPos = navigator.geolocation.watchPosition(
+    socket.on("connection", () => {
+      navigator.geolocation.watchPosition(
         (data) => {
           console.log("Location updated in client");
           socket.emit("location_updated", data.coords);
         },
         (err) => console.log(err),
-        { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 }
+        { enableHighAccuracy: true, maximumAge: 30000, timeout: 5000 }
       );
-    })
+    });
     webSocket = socket;
-    return () => navigator.geolocation.clearWatch(watchPos)
   }, []);
 
   const subscribeToPushNotify = async () => {

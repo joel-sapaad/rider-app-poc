@@ -64,6 +64,7 @@ app.post("/send_push", (req, res) => {
   const data = req.body;
   const payload = JSON.stringify({
     title: data.message.title,
+    body: data.message.body
   });
   webPush
     .sendNotification(data.subscription, payload)

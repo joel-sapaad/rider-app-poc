@@ -18,7 +18,13 @@ function ActiveClients() {
   }, []);
 
   const sendNotification = async (subscription: any) => {
-    let payload = { subscription, message: { title: "New Order created" } };
+    let payload = {
+      subscription,
+      message: {
+        title: "New Order created",
+        body: "Please come to the restaurant and collect order",
+      },
+    };
     fetch("/send_push", {
       method: "post",
       body: JSON.stringify(payload),
