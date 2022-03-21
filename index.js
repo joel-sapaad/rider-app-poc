@@ -18,6 +18,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 // Middlewares
+app.use(express.static(path.join(__dirname, 'dist')));
 app.use(morgan("tiny"));
 app.use(express.json());
 
@@ -59,12 +60,8 @@ app.post("/send_push", (req, res) => {
     .catch((error) => console.error(error));
 });
 
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist/index.html"), function (err) {
-    if (err) {
-      res.status(500).send(err);
-    }
-  });
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname+'/dist/index.html'));
 });
 
 const server = httpServer.listen(process.env.PORT, () => {
