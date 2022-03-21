@@ -2,9 +2,16 @@ require("dotenv").config({ path: ".env" });
 const fs = require("fs");
 fs.copyFile(`${__dirname}/sw.js`, `${__dirname}/dist/sw.js`, (err) => {
   if (err) {
-    console.log("error copying file");
+    console.log("error copying file sw.js");
   } else {
-    console.log("copy file success");
+    console.log("Copy sw.js success");
+  }
+});
+fs.copyFile(`${__dirname}/rider.png`, `${__dirname}/dist/rider.png`, (err) => {
+  if (err) {
+    console.log("error copying file rider.png");
+  } else {
+    console.log("Copy rider.png success");
   }
 });
 // Imports

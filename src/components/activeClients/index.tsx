@@ -17,7 +17,7 @@ function ActiveClients() {
     });
   }, []);
 
-  const sendNotification = async (subscription: any) => {
+  const sendNotification = (subscription: any) => {
     let payload = {
       subscription,
       message: {

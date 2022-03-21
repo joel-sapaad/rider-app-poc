@@ -5,6 +5,7 @@ self.addEventListener("push", (event) => {
     body: data.body,
     tag: "1",
     requireInteraction: true,
+    icon:"/rider.png"
   });
 });
 
