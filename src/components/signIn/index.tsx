@@ -38,7 +38,7 @@ function SignIn() {
       });
       fetch("/subscribe", {
         method: "post",
-        body: JSON.stringify(subscription),
+        body: JSON.stringify({ email: userEmail, subscription }),
         mode: "same-origin",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +50,7 @@ function SignIn() {
             subscription,
           });
           dispatch(setUser(userEmail));
-          dispatch(setUserSubscription(subscription))
+          dispatch(setUserSubscription(subscription));
           console.log("Success");
         } else {
           console.log("fail");

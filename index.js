@@ -60,18 +60,10 @@ io.on("connection", (socket) => {
 });
 
 app.post("/subscribe", (req, res) => {
-  const subscription = req.body;
-
-  console.log("subscribed", subscription);
-  io.sockets.emit("client_subscribed", subscription);
+  const client = req.body;
+  console.log("subscribed", client);
+  io.sockets.emit("client_subscribed", client);
   res.status(201).json({});
-
-  // const payload = JSON.stringify({
-  //   title: 'Push notifications with Service Workers',
-  // });
-
-  // webPush.sendNotification(subscription, payload)
-  //   .catch(error => console.error(error));
 });
 
 app.post("/send_push", (req, res) => {
