@@ -10,3 +10,6 @@ export const urlBase64ToUint8Array = (base64String: string) => {
   }
   return outputArray;
 };
+
+export const publicVapidKey =
+  "BJGUs6kqYmPtYX-808hWBIgYvzhNyjYP4_MMIKTqPQaTPL1Kf-CvKMeq1oE6RTgcFG6Jc2SzBl_1OrDelkroDdo";
