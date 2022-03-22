@@ -16,6 +16,7 @@ fs.copyFile(`${__dirname}/rider.png`, `${__dirname}/dist/rider.png`, (err) => {
 });
 // Imports
 const express = require("express");
+const cors = require("cors");
 const webPush = require("web-push");
 const morgan = require("morgan");
 const path = require("path");
@@ -24,9 +25,15 @@ const { Server } = require("socket.io");
 // Initialise app
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+app.use(cors({}));
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 // Middlewares
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, "dist")));
 app.use(morgan("tiny"));
 app.use(express.json());
 
@@ -71,15 +78,15 @@ app.post("/send_push", (req, res) => {
   const data = req.body;
   const payload = JSON.stringify({
     title: data.message.title,
-    body: data.message.body
+    body: data.message.body,
   });
   webPush
     .sendNotification(data.subscription, payload)
     .catch((error) => console.error(error));
 });
 
-app.get('*', (req,res) =>{
-  res.sendFile(path.join(__dirname+'/dist/index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/dist/index.html"));
 });
 
 const server = httpServer.listen(process.env.PORT, () => {
