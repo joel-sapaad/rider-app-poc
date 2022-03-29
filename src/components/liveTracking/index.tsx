@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { io } from "socket.io-client";
 import { RootState } from "../../redux/store";
 
 const LiveTracking = () => {
   const user = useSelector((state: RootState) => state.user);
   const [coords, setCoords] = useState({ lat: 0, lon: 0 });
+  const [websocket, setWebsocket] = useState(null as any);
 
   useEffect(() => {
     let id: any, target: any, options: any;
-    
+    const socket = io("/");
+    setWebsocket(socket)
     function success(pos:GeolocationPosition) {
       let {latitude,longitude} = pos.coords
       setCoords({ lat: latitude, lon: longitude });
@@ -40,6 +43,16 @@ const LiveTracking = () => {
 
     id = navigator.geolocation.watchPosition(success, error, options);
   }, []);
+
+  useEffect(() => {
+    if (websocket) {
+      websocket.emit("location_updated", {
+        user,
+        coords,
+      });
+    }
+  }, [JSON.stringify(coords)]);
+
   return (
     <div>
       <h1>Welcome {user.email}</h1>
