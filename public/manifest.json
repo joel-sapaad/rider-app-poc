@@ -3,7 +3,7 @@
   "short_name": "Rider App",
   "lang": "en-GB",
   "start_url": "/",
-  "display": "browser",
+  "display": "standalone",
   "icons": [
     {
       "src": "/images/android/android-launchericon-512-512.png",
