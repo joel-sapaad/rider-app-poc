@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import RenderMap from "../renderMap";
 
 const LiveTracking = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -44,6 +45,7 @@ const LiveTracking = () => {
     <div>
       <h1>Welcome {user.email}</h1>
       <h2>Live tracking test</h2>
+      <RenderMap userLon={coords.lon} userLat={coords.lat} />
       <h3>Latitude: {coords.lat}</h3>
       <h3>Longitude: {coords.lon}</h3>
     </div>
