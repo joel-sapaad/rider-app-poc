@@ -104,9 +104,7 @@ const UserPermissionWatcher = (props: IUserPermissionWatcherProps) => {
       });
   };
 
-  return notificationSupport &&
-    notificationStatus === "granted" &&
-    locationStatus === "granted" ? (
+  return locationStatus === "granted" ? (
     <>{props.children}</>
   ) : (
     <div className="user-permission-container">

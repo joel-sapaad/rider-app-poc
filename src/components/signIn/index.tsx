@@ -23,6 +23,8 @@ function SignIn() {
   };
 
   const subscribeToPushNotify = async () => {
+    dispatch(setUser(userEmail));
+    dispatch(setUserSubscription({}));
     if ("serviceWorker" in navigator && "PushManager" in window) {
       navigator.serviceWorker.getRegistration().then((reg) => console.log(reg));
       const register = await navigator.serviceWorker.register("/sw.js", {
@@ -38,7 +40,7 @@ function SignIn() {
       });
       fetch("/subscribe", {
         method: "post",
-        body: JSON.stringify({ email: userEmail, subscription }),
+        body: JSON.stringify({ email: userEmail }),
         mode: "same-origin",
         headers: {
           "Content-Type": "application/json",
